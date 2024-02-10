@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div style="width: 700px; height: 400px">
+      <canvas id="randomChart" width="400" height="200"></canvas>
+    </div>
+
+    <div>
+        <form id="predictionForm">
+            <input type="number" id="predictionInput" required>
+            <select id="predictionDirection" required>
+                <option value="up">Up</option>
+                <option value="down">Down</option>
+            </select>
+            <button type="submit">Submit Prediction</button>
+        </form>
+    </div>
+
+    <div id="notification"></div>
+
+    <div>
+        <p id="timer">Time left: <span id="countdown">10</span> seconds</p>
+    </div>
+
+  <script>
+    const ctx = document.getElementById('randomChart').getContext('2d');
+    const notificationElement = document.getElementById('notification');
+    const predictionForm = document.getElementById('predictionForm');
+    const predictionInput = document.getElementById('predictionInput');
+    const predictionDirection = document.getElementById('predictionDirection');
+    const timerElement = document.getElementById('countdown');
+
+    const data = {
+      labels: [],
+      datasets: [{
+        label: 'Random Chart',
+        data: [],
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 2,
+        fill: false
+      }]
+    };
+
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        scales: {
+          x: {
+            type: 'linear',
+            position: 'bottom'
+          },
+          y: {
+            type: 'linear',
+            position: 'left'
+          }
+        }
+      }
+    };
+
+    const randomChart = new Chart(ctx, config);
+
+    let countdown = 10;
+    let countdownInterval;
+
+    function updateChart() {
+      const newDataPoint = Math.random() * 100;
+
+      data.labels.push(data.labels.length);
+      data.datasets[0].data.push(newDataPoint);
+
+      if (data.labels.length > 10) {
+        data.labels.shift();
+        data.datasets[0].data.shift();
+      }
+
+      randomChart.update();
+
+      countdown = 10;
+      updateTimer();
+
+      setTimeout(updateChart, 10000);
+    }
+
+    function updateTimer() {
+      countdownInterval = setInterval(() => {
+        timerElement.textContent = countdown;
+        countdown--;
+
+        if (countdown < 0) {
+          clearInterval(countdownInterval);
+          notifyLoss();
+          updateChart();
+        }
+      }, 1000);
+    }
+
+    function notifyWin() {
+      notificationElement.textContent = 'Congratulations! You win!';
+      // Simulate storing data in the database
+      // In a real-world scenario, use AJAX to send data to the server and store in the database
+      localStorage.setItem('result', 'win');
+    }
+
+    function notifyLoss() {
+      notificationElement.textContent = 'Sorry, you lose.';
+      // Simulate storing data in the database
+      // In a real-world scenario, use AJAX to send data to the server and store in the database
+      localStorage.setItem('result', 'lose');
+    }
+
+    predictionForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const userPrediction = parseFloat(predictionInput.value);
+      const currentDataPoint = data.datasets[0].data[data.datasets[0].data.length - 1];
+
+      if (predictionDirection.value === 'up' && userPrediction > currentDataPoint) {
+        notifyWin();
+      } else if (predictionDirection.value === 'down' && userPrediction < currentDataPoint) {
+        notifyWin();
+      } else {
+        notifyLoss();
+      }
+
+      clearInterval(countdownInterval);
+      updateChart();
+    });
+
+    updateChart();
+  </script>
+</body>
+</html>

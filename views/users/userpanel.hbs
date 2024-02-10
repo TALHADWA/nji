@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/brands.min.css"
+    integrity="sha512-8RxmFOVaKQe/xtg6lbscU9DU0IRhURWEuiI0tXevv+lXbAHfkpamD4VKFQRto9WgfOJDwOZ74c/s9Yesv3VvIQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css"
+    integrity="sha512-d0olNN35C6VLiulAobxYHZiXJmq+vl+BGIgAxQtD5+kqudro/xNMvv2yIHAciGHpExsIbKX3iLg+0B6d0k4+ZA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <title>Betting Dashboard</title>
+  <style>
+    .menu {
+
+      background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+    }
+
+    .textcolor {
+      background-image: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+      -webkit-background-clip: text;
+      /* For webkit-based browsers */
+      background-clip: text;
+      color: transparent;
+    }
+
+    .footer {
+
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="menu w-full text-white flex justify-between px-4 py-2 font-bold">
+    <div>
+
+      <a href="/">Dashboard</a>
+
+    </div>
+    <div class="space-x-2">
+
+      <a href="/deposit">Deposit</a>
+      <a href="/withdraw">Withdraw</a>
+      <a href="/referal">Invite & Earn</a>
+      <a href="/signin" class="border-2 border-white px-2 py-1 rounded">Logout</a>
+    </div>
+  </nav>
+
+  <div class="flex justify-center">
+
+    <div class="flex py-4 px-8 border-2 border-black w-fit my-2">
+      <p>Total Balance: $ </p>
+      <p id="userbalance" class="font-bold">{{user.balance}}</p>
+      <p id="useremail" hidden class="font-bold">{{user.email}}</p>
+    </div>
+  </div>
+  <div class="chart-container">
+    <canvas id="randomChart" width="600" height="400"></canvas>
+  </div>
+
+  <div class="w-full p-4 ">
+    <form id="betForm" action="#" enctype="application/x-www-form-urlencoded" method="post" class="flex font-semibold">
+      <div class="flex flex-col">
+        <div class="space-x-4 flex">
+          <div>
+            <label for="betAmount">Bet Amount:</label>
+            <input type="number" id="betAmount" name="betAmount" min="1"
+              class="px-4 py-1 outline-none border border-black">
+          </div>
+          <div>
+            <label for="directionDropdown">Direction:</label>
+            <select id="directionDropdown" name="directionDropdown">
+              <option value="up">High</option>
+              <option value="down">Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="py-4 w-full justify-center flex">
+          <button type="button" class="bg-orange-400 text-white  rounded px-4 py-2 w-full" id="placeBetBtn">
+            Trade</button>
+        </div>
+        <div class="text-red-600">
+          <p id="notification"></p>
+          <p id="countdownDisplay"></p>
+        </div> <!-- Notification message -->
+      </div>
+    </form>
+  </div>
+
+  <div class="lg:col-span-9  w-full py-12">
+  <p class="px-8 font-semibold">Previous history</p>
+    <table class="min-w-full  border border-gray-300">
+
+      <thead>
+
+
+        <tr class="border border-gray-900">
+          <th class="py-2 px-4 border-t border-gray-900">Period</th>
+          <th class="py-2 px-4 border-b border-gray-900">Cureent balance </th>
+          <th class="py-2 px-4 border-b border-gray-900">Win/Lose </th>
+          <th class="py-2 px-4 border-b border-gray-900">Profit </th>
+
+
+        </tr>
+
+      </thead>
+      <tbody class="text-center">
+        {{#each filteredData}}
+        <tr class="bg-white border-b border-gray-500">
+          <td class="py-2 px-4 border-b">{{this.timestamp}}</td>
+          <td class="py-2 px-4 border-b">{{this.currentbalance}}</td>
+          <td class="py-2 px-4 border-b">{{this.result}}</td>
+          <td class="py-2 px-4 border-b">{{this.profit}}</td>
+
+        </tr>
+        {{/each }}
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="lg:col-span-9  w-full py-12">
+    <table class="min-w-full  border border-gray-300" id="myTable">
+
+      <thead>
+        <tr class="border border-gray-900">
+          <th class="py-2 px-4 border-t border-gray-900">Period no</th>
+          <th class="py-2 px-4 border-b border-gray-900">Result </th>
+
+
+        </tr>
+      </thead>
+      <tbody class="text-center">
+
+        <tr class="bg-white border-b border-gray-500">
+          <td class="py-2 px-4 border-b">145812</td>
+          <td class="py-2 px-4 border-b">High</td>
+
+        </tr>
+        <tr class="bg-white border-b border-gray-500">
+          <td class="py-2 px-4 border-b">145813</td>
+          <td class="py-2 px-4 border-b">High</td>
+
+        </tr>
+        <tr class="bg-white border-b border-gray-500">
+          <td class="py-2 px-4 border-b">145814</td>
+          <td class="py-2 px-4 border-b">low</td>
+
+        </tr>
+        <tr class="bg-white border-b border-gray-500">
+          <td class="py-2 px-4 border-b">145815</td>
+          <td class="py-2 px-4 border-b">low</td>
+
+        </tr>
+        <tr class="bg-white border-b border-gray-500">
+          <td class="py-2 px-4 border-b">145816</td>
+          <td class="py-2 px-4 border-b">high</td>
+
+        </tr>
+        <tr class="bg-white border-b border-gray-500">
+          <td class="py-2 px-4 border-b">145817</td>
+          <td class="py-2 px-4 border-b">high</td>
+
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+  <div class="footer bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white py-2 text-center ">
+    <a href="https://t.me/hashe786" class="">Contact us: <i class="fab fa-telegram-plane fa-2x"></i></a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('randomChart').getContext('2d');
+      let lastBetResult = null;
+      let isBetPlaced = false; // Track if a bet is placed
+      let totalBets = 0;
+      let wins = 0;
+
+      const initialData = {
+        labels: Array.from({ length: 20 }, (_, i) => i),
+        datasets: [{
+          label: 'BTCUSDT',
+          data: Array.from({ length: 20 }, () => Math.random() * 100),
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 2,
+          fill: false,
+        }],
+      };
+
+      const config = {
+        type: 'line',
+        data: initialData,
+        options: {
+          scales: {
+            x: {
+              type: 'linear',
+              position: 'bottom',
+            },
+            y: {
+              type: 'linear',
+              position: 'left',
+            },
+          },
+        },
+      };
+
+      const randomChart = new Chart(ctx, config);
+
+      function updateChart() {
+        const newDataPoint = Math.random() * 100;
+
+        initialData.labels.push(initialData.labels.length);
+        initialData.datasets[0].data.push(newDataPoint);
+
+        if (initialData.labels.length > 100) {
+          initialData.labels.shift();
+          initialData.datasets[0].data.shift();
+        }
+
+        randomChart.data.labels = [...initialData.labels];
+        randomChart.data.datasets[0].data = [...initialData.datasets[0].data];
+        randomChart.update();
+      }
+
+      function displayNotification(message) {
+        const notificationDisplay = document.getElementById('notification');
+        notificationDisplay.textContent = message;
+      }
+
+      function startCountdown() {
+        let countdown = 10;
+        const countdownDisplay = document.getElementById('countdownDisplay');
+        countdownDisplay.textContent = `Time remaining: ${countdown} seconds`;
+
+        const countdownInterval = setInterval(() => {
+          countdown--;
+
+          if (countdown == 0) {
+            clearInterval(countdownInterval);
+            placeBet();
+          } else {
+            countdownDisplay.textContent = `Time remaining: ${countdown} seconds`;
+          }
+        }, 1000);
+      }
+
+      function placeBet() {
+        const betAmount = parseInt(document.getElementById('betAmount').value);
+        const direction = document.getElementById('directionDropdown').value;
+        const userBalance = parseFloat(document.getElementById('userbalance').innerText);
+
+
+
+        displayNotification(direction);
+
+        if (betAmount <= 0 || isNaN(betAmount)) {
+          displayNotification('Please enter a valid bet amount.');
+          return;
+        }
+
+        if (userBalance < betAmount) {
+          displayNotification('Insufficient balance. Please deposit money first.');
+          return;
+        }
+
+        // Simulate the win/loss result (you can replace this logic with your actual game logic)
+        const currentPrice = initialData.datasets[0].data[initialData.datasets[0].data.length - 1];
+        const isCorrectPrediction = (direction === 'up' && currentPrice > initialData.datasets[0].data[initialData.datasets[0].data.length - 2]) ||
+          (direction === 'down' && currentPrice < initialData.datasets[0].data[initialData.datasets[0].data.length - 2]);
+
+        totalBets++;
+        let result;
+        let profit = 0;
+        if (isCorrectPrediction && Math.random() < 0.7) { // 90% win probability
+          lastBetResult = true;
+          wins++;
+          result = "win"
+          profit = betAmount * 1.7;
+          displayNotification('You win!');
+        } else if (!isCorrectPrediction && Math.random() >= 0.3) { // 10% win probability when the prediction is incorrect
+          lastBetResult = true;
+          wins++;
+          result = "losse"
+          profit = betAmount;
+          displayNotification('You lose!');
+        } else {
+          result = "lose";
+          profit = -betAmount;
+          displayNotification('You lose!');
+        }
+
+        // Update user balance
+        const useremail = document.getElementById('useremail').innerText;
+
+        const newBalance = userBalance + profit;
+        document.getElementById('userbalance').innerText = newBalance;
+        const userData = {
+          useremail: useremail, // Replace with actual user email
+          profit: profit,
+          currentbalance: newBalance,
+          result: result
+        };
+
+        fetch('/result', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(userData)
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to add data to the database.');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('Data added to database:', data);
+          })
+          .catch(error => {
+            console.error('Error:', error.message);
+          });
+
+
+        // Update user balance on the server
+        const updattebalnce = {
+          useremail: useremail, // Replace with actual user email
+          newBalance: newBalance
+        };
+
+        fetch('/update-balance', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updattebalnce)
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to update user balance.');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('User balance updated:', data);
+          })
+          .catch(error => {
+            console.error('Error:', error.message);
+          });
+
+        // Add data to the database via API
+
+
+
+        isBetPlaced = true; // Mark that a bet is placed
+        updateChart(); // Update the chart after placing the bet
+        // Reload the page after the bet is finished
+        setTimeout(() => {
+          location.reload();
+        }, 3000);
+      }
+
+      document.getElementById('placeBetBtn').addEventListener('click', () => {
+        startCountdown();
+      });
+
+      // Display win percentage
+      window.addEventListener('unload', () => {
+        if (totalBets > 0) {
+          const winPercentage = (wins / totalBets) * 100;
+          displayNotification(`You won ${winPercentage.toFixed(2)}% of the bets.`);
+        }
+      });
+    });
+  </script>
+  <script>
+    function addRow() {
+      // Generate a random ID (assuming it's in the range of 100000 to 999999)
+      var id = Math.floor(Math.random() * 900000) + 100000;
+      // Randomly select "High" or "Low"
+      var status = Math.random() < 0.5 ? "High" : "Low";
+      // Create a new row
+      var newRow = document.createElement("tr");
+      newRow.className = "bg-white border-b border-gray-500";
+      newRow.innerHTML = "<td class='py-2 px-4 border-b'>" + id + "</td><td class='py-2 px-4 border-b'>" + status + "</td>";
+      // Insert the new row at the top of the table
+      var table = document.getElementById("myTable").getElementsByTagName('tbody')[0];
+      table.insertBefore(newRow, table.firstChild);
+    }
+
+    // Add a new row every 3 minutes
+    setInterval(addRow, 10000);
+  </script>
+</body>
+
+</html>

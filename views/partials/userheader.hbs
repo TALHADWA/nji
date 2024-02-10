@@ -1,0 +1,49 @@
+<div
+    class="w-full border-b drop-shadow-md border-grey-400 bg-white h-16  flex justify-between sm:h-20 px-2 py-2 sm:px-4 md:px-8 lg:px-12 items-center  ">
+    <div class="flex space-x-1  items-center">
+        <img src="https://pbs.twimg.com/profile_images/1086871544901656576/f8jZ6ag9_400x400.png" width="50px" alt="">
+        <p class="text-blue-800 font-bold">Dashboard</p>
+    </div>
+    <div class=" space-x-4 items-center " id="mainsetting">
+        <div class="flex items-center space-y-4">
+
+            <p class="font-bold">{{userdata.name}}</p>
+            <img id="userimg"
+                src="https://w7.pngwing.com/pngs/831/88/png-transparent-user-profile-computer-icons-user-interface-mystique-miscellaneous-user-interface-design-smile-thumbnail.png"
+                width="80px" alt="">
+        </div>
+        <div class="bg-white border border-gray-200 w-34  py-2 space-y-2 z-40 hidden " id="settings">
+            <div class="w-full">
+
+                <a class="text-center px-4 py-2 hover:bg-blue-700 hover:text-white block hover:pointer-events-auto	">
+                    Setting</a>
+                <a class="text-center px-4 py-2 hover:bg-blue-700 hover:text-white block hover:pointer-events-auto"
+                    href="/usersignin"> Log Out</a>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+    const imgopen = document.getElementById("userimg")
+
+    imgopen.addEventListener("click", () => {
+        const settings = document.getElementById("settings")
+        const mainsetting = document.getElementById("mainsetting")
+
+        
+        if(settings.classList.contains("hidden")){
+            settings.classList.remove("hidden")
+            settings.classList.add("block")
+            mainsetting.classList.add("mt-16")
+        }else{
+            settings.classList.add("hidden")
+            settings.classList.remove("block")
+            mainsetting.classList.remove("mt-16")
+        }
+    })
+</script>

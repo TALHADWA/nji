@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>Dashboard</title>
+</head>
+<body>
+    <!-- Page Container -->
+<div
+  id="page-container"
+  x-data="{ userDropdownOpen: false, mobileNavOpen: false }"
+  class="mx-auto flex min-h-screen w-full min-w-[320px] flex-col bg-slate-100 "
+>
+  <!-- Page Header -->
+  {{>empheader}}
+  <!-- END Page Header -->
+
+  <!-- Page Content -->
+  <main id="page-content" class="flex max-w-full flex-auto flex-col   my-24">
+    <div class="container mx-auto p-4 lg:p-8 xl:max-w-7xl">
+      <div class="grid grid-cols-1 md:gap-20 lg:grid-cols-12">
+        <!-- Navigation -->
+        {{>empsidebar}}
+        <!-- END Navigation -->
+
+        <!-- Main Content -->
+        <div class="lg:col-span-9 ml-52 w-full">
+              <table class="min-w-full  border border-gray-300">
+
+           <thead>
+        <tr>
+          <th class="py-2 px-4 border-b">Name</th>
+          <th class="py-2 px-4 border-b">Email</th>
+          <th class="py-2 px-4 border-b">ammount</th>
+          <th class="py-2 px-4 border-b">number</th>
+          <th class="py-2 px-4 border-b">Account number</th>
+          <th class="py-2 px-4 border-b">#</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each deposits}}
+          <tr class="bg-white border-b border-gray-500">
+            <td class="py-2 px-4 border-b">{{this.name}}</td>
+            <td class="py-2 px-4 border-b">{{this.email}}</td>
+            <td class="py-2 px-4 border-b">{{this.deposit}}</td>
+            <td class="py-2 px-4 border-b">{{this.accountnumber}}</td>
+            <td class="py-2 px-4 border-b">{{this.phone}}</td>
+            <td class="py-2 px-4 border-b">
+          <a href="#" class="bg-blue-500 text-white py-1 px-2 rounded approve-btn" data-depositid="{{this._id}}">Approve</a>
+     </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+        </div>
+        <!-- END Main Content -->
+      </div>
+    </div>
+  </main>
+  <!-- END Page Content -->
+
+  <!-- Page Footer -->
+  {{>empfooter}}
+  <!-- END Page Footer -->
+</div>
+<!-- END Page Container -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const approveButtons = document.querySelectorAll('.approve-btn');
+      approveButtons.forEach(function(button) {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          const depositId = this.getAttribute('data-depositid');
+
+          // Send AJAX request to approve deposit
+          fetch('/approve-deposit', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ id: depositId })
+            })
+            .then(response => {
+              if (response.ok) {
+                alert('Deposit request approved successfully!');
+                // You can perform further actions like updating the UI if needed
+              } else {
+                throw new Error('An error occurred while approving the deposit request.');
+              }
+            })
+            .catch(error => {
+              console.error(error);
+              alert('An error occurred while approving the deposit request.');
+            });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

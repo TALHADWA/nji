@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <!-- Page Container -->
+    <div id="page-container" x-data="{ userDropdownOpen: false, mobileNavOpen: false }"
+        class="mx-auto flex min-h-screen w-full min-w-[320px] flex-col bg-slate-100 ">
+        <!-- Page Header -->
+        {{>empheader}}
+        <!-- END Page Header -->
+
+        <!-- Page Content -->
+        <main id="page-content" class="flex max-w-full flex-auto flex-col   my-24">
+            <div class="container mx-auto p-4 lg:p-8 xl:max-w-7xl">
+                <div class="grid grid-cols-1 md:gap-20 lg:grid-cols-12">
+                    <!-- Navigation -->
+                    {{>empsidebar}}
+                    <!-- END Navigation -->
+
+                    <!-- Main Content -->
+                    <div class="lg:col-span-9 ml-52 w-full">
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-12 md:gap-6">
+                            <div class="rounded-lg border border-slate-200 bg-white p-6 sm:col-span-6 xl:col-span-3">
+                                <dl>
+                                    <dt class="text-2xl font-bold">63</dt>
+                                    <dd class="text-sm font-medium text-slate-500">
+                                        Total users
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="rounded-lg border border-slate-200 bg-white p-6 sm:col-span-6 xl:col-span-3">
+                                <dl>
+                                    <dt class="text-2xl font-bold">6</dt>
+                                    <dd class="text-sm font-medium text-slate-500">
+                                        Deposit requests
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="rounded-lg border border-slate-200 bg-white p-6 sm:col-span-6 xl:col-span-3">
+                                <dl>
+                                    <dt class="text-2xl font-bold">5</dt>
+                                    <dd class="text-sm font-medium text-slate-500">
+                                        Withdraw Requests
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="rounded-lg border border-slate-200 bg-white p-6 sm:col-span-6 xl:col-span-3">
+                                <dl>
+                                    <dt class="text-2xl font-bold">10</dt>
+                                    <dd class="text-sm font-medium text-slate-500">
+                                        Total Messages
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div
+                                class="overflow-hidden rounded-xl border border-slate-200 bg-white sm:col-span-12 lg:col-span-6">
+
+                                <p>set graph value</p>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="mx-auto w-full" style="height: 400px; width:600px">
+
+                    <!-- END Main Content -->
+                    <canvas id="randomLineChart" width="400" height="200"></canvas>
+
+
+                    <form action="/graphdata" class="flex flex-col  w-44 space-y-4 pt-8"  method="post" enctype="application/x-www-form-urlencoded">
+                        <input type="number" name="data" placeholder="enter graph value between 1-100 " class="border border-black px-2 py-1">
+                        <button type="submit">submit</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+        <!-- END Page Content -->
+
+        <!-- Page Footer -->
+        {{>empfooter}}
+        <!-- END Page Footer -->
+    </div>
+    <!-- END Page Container -->
+   <script>
+    // Assuming you are passing the 'data' variable from the backend
+
+    // Get the canvas element and context
+    const canvas = document.getElementById('randomLineChart');
+    const ctx = canvas.getContext('2d');
+
+    // Initial data for the chart
+    const initialData = Array.from({ length: 10 }, () => Math.floor(Math.random() * 101));
+
+    // Create the chart
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array.from({ length: initialData.length }, (_, i) => i + 1),
+            datasets: [{
+                label: 'Random Values',
+                borderColor: 'rgb(75, 192, 192)',
+                data: initialData,
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+
+    // Function to update the chart with new random values or backend data
+    function updateChart(data) {
+        if (!data) {
+            // Generate new random data if 'data' is not provided
+            const newData = Array.from({ length: 10 }, () => Math.floor(Math.random() * 101));
+            chart.data.datasets[0].data = newData;
+        } else {
+            // Use backend data if available
+            chart.data.datasets[0].data.push(data);
+
+            // Remove the oldest data point if the length exceeds 10
+            if (chart.data.datasets[0].data.length > 10) {
+                chart.data.datasets[0].data.shift();
+            }
+        }
+
+        chart.update();
+    }
+
+    // Initial call to updateChart with backend data
+    updateChart({{data}});
+
+    // Update the chart every 2 seconds (for example)
+    setInterval(() => updateChart(), 200000);
+</script>
+
+</body>
+
+</html>

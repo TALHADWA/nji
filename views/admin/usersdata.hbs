@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <title>Dashboard</title>
+</head>
+
+<body>
+  <!-- Page Container -->
+  <div id="page-container" x-data="{ userDropdownOpen: false, mobileNavOpen: false }"
+    class="mx-auto flex min-h-screen w-full min-w-[320px] flex-col bg-slate-100 ">
+    <!-- Page Header -->
+    {{>empheader}}
+    <!-- END Page Header -->
+
+    <!-- Page Content -->
+    <main id="page-content" class="flex max-w-full flex-auto flex-col   my-24">
+      <div class="container mx-auto p-4 lg:p-8 xl:max-w-7xl">
+        <div class="grid grid-cols-1 md:gap-20 lg:grid-cols-12">
+          <!-- Navigation -->
+          {{>empsidebar}}
+          <!-- END Navigation -->
+
+          <!-- Main Content -->
+          <div class="lg:col-span-9 ml-52 w-full">
+            <table class="min-w-full  border border-gray-300">
+
+              <thead>
+                <tr>
+                  <th class="py-2 px-4 border-b">Name</th>
+                  <th class="py-2 px-4 border-b">Email</th>
+                  <th class="py-2 px-4 border-b">password</th>
+                  <th class="py-2 px-4 border-b">Phone</th>
+                  <th class="py-2 px-4 border-b">Balance</th>
+                  <th class="py-2 px-4 border-b">#</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each users}}
+                <tr class="bg-white border-b border-gray-500">
+                  <td class="py-2 px-4 border-b">{{this.name}}</td>
+                  <td class="py-2 px-4 border-b">{{this.email}}</td>
+                  <td class="py-2 px-4 border-b">{{this.password}}</td>
+                  <td class="py-2 px-4 border-b">{{this.phone}}</td>
+                  <td class="py-2 px-4 border-b"></td>
+                   <td class="py-2 px-4 border-b">
+                    <input type="number" name="balance" value="{{this.balance}}" id="balance-{{this._id}}">
+                  </td>
+                  <td class="py-2 px-4 border-b">
+                    <button class="bg-blue-500 text-white py-1 px-2 rounded"
+                      onclick="updateBalance('{{this._id}}')">Update</button>
+                  </td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+          <!-- END Main Content -->
+        </div>
+      </div>
+    </main>
+    <!-- END Page Content -->
+
+    <!-- Page Footer -->
+    {{>empfooter}}
+    <!-- END Page Footer -->
+      <script>
+      function updateBalance(userId) {
+        const newBalance = document.getElementById(`balance-${userId}`).value;
+        fetch(`/users/${userId}/update-balance`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ balance: newBalance }),
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to update balance');
+            }
+            alert('Balance updated successfully');
+          })
+          .catch(error => console.error('Error updating balance:', error));
+      }
+    </script>
+
+  </div>
+  <!-- END Page Container -->
+</body>
+
+</html>

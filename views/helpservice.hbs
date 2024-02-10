@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        nav {
+            background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+            overflow: hidden;
+        }
+
+        nav a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        nav .login-btn, nav .register-btn {
+            float: right;
+        }
+
+        nav input {
+            display: none;
+        }
+
+        nav .button {
+            float: right;
+            cursor: pointer;
+            display: block;
+            padding: 14px 16px;
+        }
+
+        nav .button span {
+            background: white;
+            display: block;
+            height: 3px;
+            width: 25px;
+            margin-bottom: 5px;
+            transition: 0.4s;
+        }
+
+        nav input:checked ~ a {
+            display: block;
+            text-align: center;
+            width: 100%;
+        }
+
+        nav input:checked ~ .button span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        nav input:checked ~ .button span:nth-child(2) {
+            opacity: 0;
+        }
+
+        nav input:checked ~ .button span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        nav a:hover, nav .login-btn:hover, nav .register-btn:hover {
+            background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+            color: black;
+        }
+
+        nav input:checked ~ nav a {
+            display: block;
+        }
+
+        nav nav {
+            display: none;
+            position: absolute;
+            top: 56px;
+            left: 0;
+            width: 100%;
+        }
+
+        nav input:checked ~ nav {
+            display: block;
+        display: flex;
+    flex-wrap: wrap;
+    left: 1200px;
+    width: 233px;
+    font-size: 25px;
+    overflow: hidden;
+}
+        
+        nav nav a {
+            display: block;
+            text-align: left;
+            width: 100%;
+        }
+
+        nav nav a:hover {
+            
+            color: black;
+        }
+
+
+         body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1em;
+            text-align: center;
+        }
+
+        section {
+            max-width: 800px;
+    margin: 105px auto;
+    padding: 21px;
+    lor: #ee7724;
+    background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+        
+
+        h2 {
+            color: #333;
+            font-size: 30px;
+        }
+
+        p {
+            line-height: 1.6;
+            color: black;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="#">USD</a>
+        <a href="user.html" target="_blank">Home</a>
+        <a href="#">Referral</a>
+        <a href="#">Deposit</a>
+        <a href="game.html" target="_blank">Trading</a>
+        <a href="dashboard.html" target="_blank">Dashboard</a>
+        <a href="#">Help Centre</a>
+        <a class="login-btn" href="index.html">Login</a>
+        <a class="register-btn" href="index.html" target="_blank">Register</a>
+    
+        <input type="checkbox" id="check">
+        <label for="check" class="button">
+            <span></span>
+            <span></span>
+            <span></span>
+        </label>
+    
+        <nav>
+            <a href="#"><i class='bx bxs-microphone-alt'></i>Costumer service</a>
+            <a href="#"><i class='bx bxs-dashboard' ></i>Dashboard</a>
+            <a href="#">Element 3</a>
+        </nav>
+        </nav>
+
+    <section>
+        <h2>Contact Us</h2>
+        <p>If you have any questions or concerns, please fill out the form below.</p>
+
+        <form action="/message" method="post" enctype="application/x-www-form-urlencoded">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+
+            <button type="submit">Submit</button>
+        </form>
+    </section>
+
+</body>
+</html>
